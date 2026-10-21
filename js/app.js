@@ -10,17 +10,16 @@
   }
 
   function formatBandwidth(result) {
-    const gbps = result.bandwidthMBps / 1000;
-    return gbps >= 1 ? gbps.toFixed(2) + " GB/s" : result.bandwidthLabel;
+    return result.bandwidthLabel;
   }
 
   function formatTimeMilliseconds(result) {
-    return result.timeMs.toFixed(2) + " ms";
+    return result.timeMs.toFixed(5) + " ms";
   }
 
   function fillResult(result) {
     document.getElementById("bandwidthValue").textContent = formatBandwidth(result);
-    document.getElementById("bandwidthSub").textContent = "(" + result.bandwidthLabel + ")";
+    document.getElementById("bandwidthSub").textContent = "";
     document.getElementById("timeValue").textContent = formatTimeMilliseconds(result);
     document.getElementById("resSource").textContent = result.source;
     document.getElementById("resDest").textContent = result.destination;

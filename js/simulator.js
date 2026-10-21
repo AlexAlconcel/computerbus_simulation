@@ -24,14 +24,14 @@
   }
 
   function formatBandwidth(mbps) {
-    return Number(mbps.toFixed(4)) + " MB/s";
+    return mbps.toFixed(2) + " MB/s";
   }
 
   function formatTime(ms) {
     if (ms >= 1000) {
-      return (ms / 1000).toFixed(6).replace(/\.?0+$/, "") + " s";
+      return (ms / 1000).toFixed(5) + " s";
     }
-    return Number(ms.toFixed(6)) + " ms";
+    return ms.toFixed(5) + " ms";
   }
 
   function validate(config) {
