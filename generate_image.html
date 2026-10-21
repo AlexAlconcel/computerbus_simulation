@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Circuit Graphic Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1f2937;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        canvas {
+            border: 2px solid #047857;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="461" height="120"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Fill background with graphite
+        ctx.fillStyle = '#1f2937';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Set up emerald green color scheme
+        const emerald = '#047857';
+        const mint = '#6ee7b7';
+        const lightEmerald = '#059669';
+        
+        // Draw circuit traces with emerald green
+        ctx.strokeStyle = emerald;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        // Left traces (horizontal lines with connections)
+        const leftTraces = [
+            {y: 25, endX: 85},
+            {y: 40, endX: 75},
+            {y: 55, endX: 65},
+            {y: 70, endX: 85}
+        ];
+        
+        leftTraces.forEach(trace => {
+            ctx.beginPath();
+            ctx.moveTo(35, trace.y);
+            ctx.lineTo(trace.endX, trace.y);
+            ctx.stroke();
+            
+            // Connect to center
+            ctx.beginPath();
+            ctx.moveTo(trace.endX, trace.y);
+            ctx.lineTo(160, 60);
+            ctx.stroke();
+        });
+        
+        // Right traces
+        const rightTraces = [
+            {y: 25, startX: 375},
+            {y: 40, startX: 385},
+            {y: 55, startX: 395},
+            {y: 70, startX: 375}
+        ];
+        
+        rightTraces.forEach(trace => {
+            ctx.beginPath();
+            ctx.moveTo(300, 60);
+            ctx.lineTo(trace.startX, trace.y);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(trace.startX, trace.y);
+            ctx.lineTo(426, trace.y);
+            ctx.stroke();
+        });
+        
+        // Draw connection nodes with mint green
+        ctx.fillStyle = mint;
+        const nodes = [
+            {x: 35, y: 55}, // left center
+            {x: 85, y: 25},
+            {x: 85, y: 70},
+            {x: 426, y: 40}, // right center
+            {x: 375, y: 25},
+            {x: 375, y: 70}
+        ];
+        
+        nodes.forEach(node => {
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        
+        // Draw central rounded rectangle module
+        const moduleX = 180;
+        const moduleY = 22;
+        const moduleW = 100;
+        const moduleH = 76;
+        const radius = 16;
+        
+        // Module background
+        ctx.fillStyle = '#162b43';
+        ctx.strokeStyle = lightEmerald;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(moduleX, moduleY, moduleW, moduleH, radius);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Draw icon inside module (document/data icon)
+        ctx.strokeStyle = mint;
+        ctx.lineWidth = 2;
+        
+        // Document rectangle
+        ctx.strokeRect(207, 38, 30, 32);
+        ctx.beginPath();
+        ctx.moveTo(211, 44);
+        ctx.lineTo(233, 44);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(211, 52);
+        ctx.lineTo(233, 52);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(216, 60);
+        ctx.lineTo(228, 60);
+        ctx.stroke();
+        
+        // Left arrow
+        ctx.beginPath();
+        ctx.moveTo(201, 54);
+        ctx.lineTo(188, 54);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(188, 54);
+        ctx.lineTo(194, 48);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(188, 54);
+        ctx.lineTo(194, 60);
+        ctx.stroke();
+        
+        // Right arrow
+        ctx.beginPath();
+        ctx.moveTo(243, 54);
+        ctx.lineTo(256, 54);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(256, 54);
+        ctx.lineTo(250, 48);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(256, 54);
+        ctx.lineTo(250, 60);
+        ctx.stroke();
+        
+        console.log('Circuit graphic generated with emerald color scheme!');
+    </script>
+</body>
+</html>
