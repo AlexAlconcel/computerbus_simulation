@@ -9,9 +9,19 @@
     errorBox.textContent = message || "";
   }
 
+  function formatBandwidth(result) {
+    const gbps = result.bandwidthMBps / 1000;
+    return gbps >= 1 ? gbps.toFixed(2) + " GB/s" : result.bandwidthLabel;
+  }
+
+  function formatTimeMilliseconds(result) {
+    return result.timeMs.toFixed(2) + " ms";
+  }
+
   function fillResult(result) {
-    document.getElementById("bandwidthValue").textContent = result.bandwidthLabel;
-    document.getElementById("timeValue").textContent = result.timeLabel;
+    document.getElementById("bandwidthValue").textContent = formatBandwidth(result);
+    document.getElementById("bandwidthSub").textContent = "(" + result.bandwidthLabel + ")";
+    document.getElementById("timeValue").textContent = formatTimeMilliseconds(result);
     document.getElementById("resSource").textContent = result.source;
     document.getElementById("resDest").textContent = result.destination;
     document.getElementById("resAddress").textContent = result.address;
@@ -20,25 +30,20 @@
 
   function renderHistory() {
     if (!history.length) {
-      historyEl.innerHTML = '<p class="muted">No transfers yet. Run a simulation to log activity on the bus.</p>';
+      historyEl.innerHTML = '<p class="empty">No transfers yet. Run a simulation to log activity on the bus.</p>';
       return;
     }
-    historyEl.innerHTML = history.map((tx) => {
-      return (
-        '<article class="tx">' +
-          "<strong>" + tx.source + " \u2192 " + tx.destination + "</strong>" +
-          "<p>" + tx.operation + " · " + tx.busWidth + "-bit bus · " +
-          tx.transferRate + " million transfers/s</p>" +
-          "<p>Data size: " + tx.dataSize.toLocaleString() + " bytes</p>" +
-          "<p>Bandwidth: " + tx.bandwidthLabel + " · Time: " + tx.timeLabel + "</p>" +
-        "</article>"
-      );
-    }).join("");
+    const rows = history.map((tx) => (
+      "<tr><td>◷ &nbsp;" + tx.timestamp.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) + " " + tx.timestamp.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) +
+      "</td><td>" + tx.source + "</td><td>" + tx.destination + "</td><td>" + tx.operation + "</td><td>" + tx.busWidth + " bits</td><td>" +
+      tx.dataSize.toLocaleString() + " bytes</td><td>" + tx.transferRate + " MT/s</td><td>" + formatTimeMilliseconds(tx) + "</td><td>" + formatBandwidth(tx) +
+      "</td></tr>"
+    )).join("");
+    historyEl.innerHTML = '<table><thead><tr><th>Date &amp; Time</th><th>Source</th><th>Destination</th><th>Operation</th><th>Bus Width</th><th>Data Size</th><th>Transfer Rate</th><th>Estimated Time</th><th>Bandwidth</th></tr></thead><tbody>' + rows + "</tbody></table>";
   }
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", function (event) {
     event.preventDefault();
-
     const config = {
       source: document.getElementById("source").value,
       destination: document.getElementById("destination").value,
@@ -47,13 +52,11 @@
       transferRate: document.getElementById("transferRate").value,
       dataSize: document.getElementById("dataSize").value
     };
-
     const result = BusSimulator.simulate(config);
     if (!result.ok) {
       showError(result.error);
       return;
     }
-
     showError("");
     fillResult(result);
     history.unshift(result);
@@ -61,15 +64,11 @@
     renderHistory();
   });
 
-  ["source", "destination"].forEach((id) => {
-    document.getElementById(id).addEventListener("change", () => {
+  ["source", "destination"].forEach(function (id) {
+    document.getElementById(id).addEventListener("change", function () {
       const source = document.getElementById("source").value;
       const destination = document.getElementById("destination").value;
-      if (source === destination) {
-        showError("Source and destination must be different devices.");
-      } else {
-        showError("");
-      }
+      showError(source === destination ? "Source and destination must be different devices." : "");
     });
   });
-})();
+}());
